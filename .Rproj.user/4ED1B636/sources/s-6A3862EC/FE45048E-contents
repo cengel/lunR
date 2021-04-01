@@ -1,0 +1,53 @@
+fdom <- function(yr, mo, dy, leap_month_flag){
+
+  if (is.na(yr)) {return(NA)}
+  
+  ## BEGIN MAKE CALENDAR
+  # extract the row for year and all months
+  calendar <- filter(conversion_table, year == yr) 
+  months_only <- select(calendar, first_day_month1:first_day_month12)
+  
+  # check if year has a leap month and if so, insert into the sequence
+  if (calendar$leap_month > 0) {
+    
+    # insert leap month by extracting all months and sorting (by number of first days)
+    months_only <- calendar %>% 
+      select(-c(year, leap_month, days_in_year)) %>% 
+      sort() 
+    
+    # rename and insert leap month name
+    names(months_only) <- paste0("first_day_month", c(1:calendar$leap_month, paste0(calendar$leap_month,"L"), (calendar$leap_month+1):12))
+    
+    # add other values back in
+    calendar <- bind_cols(year = calendar$year, 
+                          months_only, 
+                          leap_month = calendar$leap_month, 
+                          days_in_year = calendar$days_in_year) 
+  }
+  
+  # more error checks: 
+  # how many days in a month for a particular year. e.g. is there a Feb 30th or not?
+  # (calculate days for last month: days in year + first day month1  - first day month12)
+  max_days <- c(diff(unlist(months_only)), 
+                calendar$days_in_year + calendar$first_day_month1 - calendar$first_day_month12)
+  
+  if(dy > max_days[mo]){
+    stop(paste(month.name[mo], yr, "has only", max_days[mo], "days in lunar calendar")) 
+  }
+  
+  # does the year in fact have the leap month as requested in the query?
+  m <- paste0("first_day_month", mo, "L")
+  if(leap_month_flag & !(m %in% names(months_only))){
+    stop(paste("no leap month", mo_l, "in", yr)) 
+  }
+  
+  # extract the fist day of the month from lunar
+  first_day_of_month <- 
+    calendar %>% 
+    select(ends_with(paste0("month", mo))) %>%  
+    as.numeric()
+  
+  return(first_day_of_month)
+  
+}
+
