@@ -18,6 +18,7 @@
 #' @importFrom tidyselect ends_with
 #' @importFrom lubridate ymd
 #' @importFrom purrr pmap_dbl
+#' @importFrom tibble tibble
 #' 
 
 lunar_to_gregorian <- function(lunar_date){
