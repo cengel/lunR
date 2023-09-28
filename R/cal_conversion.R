@@ -7,19 +7,6 @@
 #' lunar_to_gregorian("1888-12-24");
 #' lunar_to_gregorian(c("1888-12-24", "1966-03L-12"));
 #' @export lunar_to_gregorian
-#' @importFrom stringr str_detect 
-#' @importFrom stringr str_split_fixed 
-#' @importFrom stringr str_ends 
-#' @importFrom stringr str_sub 
-#' @importFrom dplyr %>% 
-#' @importFrom dplyr filter 
-#' @importFrom dplyr select 
-#' @importFrom dplyr bind_cols
-#' @importFrom tidyselect ends_with
-#' @importFrom lubridate ymd
-#' @importFrom purrr pmap_dbl
-#' @importFrom tibble tibble
-#' 
 
 lunar_to_gregorian <- function(lunar_date){
   
