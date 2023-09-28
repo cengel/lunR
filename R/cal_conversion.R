@@ -68,10 +68,14 @@ get_first_day_of_month <- function(yr, mo, dy, leap_month_flag){
   if (calendar$leap_month > 0) {
     
     # insert leap month by extracting all months and sorting (by number of first days)
-    months_only <- calendar %>% 
-      select(-c(year, leap_month, days_in_year)) %>% 
-      sort() 
-    
+    months_only <- calendar %>%
+      select(-c(year, leap_month, days_in_year)) %>%
+      rowid_to_column() %>%
+      pivot_longer(-rowid) %>%
+      arrange(value) %>%
+      pivot_wider() %>%
+      select(-rowid)
+
     # rename and insert leap month name
     names(months_only) <- paste0("first_day_month", c(1:calendar$leap_month, paste0(calendar$leap_month,"L"), (calendar$leap_month+1):12))
     
